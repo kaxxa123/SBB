@@ -1,0 +1,119 @@
+Notes: 
+* All multi-byte numeric values should be encoded in big-endian.
+* Hashes are 32 byte wide dumps
+* Pub Keys are 64 byte wide dumps
+ 
+
+<STX><LEN><OPID><OBJ><ETX>
+
+<STX>: ASCII CHARACTER 2
+<LEN>: 2 bytes which indicates the number of bytes in <OPID> + <OBJ>. big-endian
+<OPID>: a single char/byte operation identifier
+<OBJ>: Defined in this standard
+<ETX>: ASCII CHARACTER 3
+
+====================
+
+Request: GET_COUNT
+<OPID>: ‘a’ = 0x61
+<OBJ>: None
+
+This is a fixed UDP message that should always match:
+<STX><LEN><OPID><OBJ><ETX> = 32-00-01-61-33
+
+====================
+
+Response: COUNT
+<OPID>: ‘c’ = 0x63
+<OBJ>: number of blocks, 32-bit, big-endian
+
+<STX><LEN><OPID><OBJ><ETX> = 32-00-05-63-xx-xx-xx-xx-33
+
+====================
+
+Request: GET_BLOCK_HASHES
+<OPID>: ‘b’ = 0x62
+<OBJ>: None
+<STX><LEN><OPID><OBJ><ETX> = 32-00-01-62-33
+
+====================
+
+Response: BLOCK_HASHES
+<OPID>: ‘h’ = 0x68
+<OBJ>: A back-to-back dump of hashes. Each taking up 32-bytes
+
+Note: 
+* Hashes are fixed width 32 byte dumps
+* No delimiters are needed the length is enough for us to know exactly 
+  how many hashes are included
+
+Consider this:
+<STX><LEN><OPID><OBJ><ETX>
+
+If Number of Hashes is N
+<LEN> = N * 32 + 1
+
+
+Sending 4 hashes would look like this:
+<LEN> = 32*4 + 1 = 129 = 0x81
+
+<STX><LEN><OPID><OBJ><ETX> = 
+32-xx-xx-68-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-33
+32-00-81-68-<hash1>-<hash2>-<hash3>-<hash4>-33
+
+====================
+
+Request: REQ_BLOCK
+
+<OPID>: ‘r’ = 0x72
+<OBJ>: 32-byte hash dump
+
+We always have the same len value:
+<LEN> = 33 = 0x21 
+
+<STX><LEN><OPID><OBJ><ETX> = 
+32-00-21-72-<hash>-33
+
+====================
+
+Response: BLOCK
+
+<OPID>: ‘x’ = 0x78
+<OBJ>: <hash><nonce><prev_hash><timestamp><transactions>
+
+<hash>      = 32-byte fixed width hash
+
+<nonce>     =  4-byte/32-bit big-endian integer
+
+<prev_hash> = 32-byte fixed width hash. 
+              For first block we set all the 32 bytes to zero. 00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00
+
+<timestamp> =  4-byte/32-bit big-endian integer
+
+
+<transactions> = <tran item1><tran item2><tran item3><tran item4>
+
+Note: again we have an array of fixed length items so the <LEN> value is enough to give us all we need.
+
+<tran item> = <hash><from_ac><to_ac>
+<hash>    = 32-byte fixed width hash
+<from_ac> = 64-byte public key dump
+<to_ac>   = 64-byte public key dump
+
+Note: 
+ The coinbase transaction would set <from_ac> to all zeros such that to always retain the fixed 64-byte width
+ Each transaction item will have a fixed length of 32+64+64= 160
+
+Looking at this:
+<STX><LEN><OPID><OBJ><ETX>
+
+<LEN> = 1 + 32 + 4 + 32 + 4 + 160*<number of transactions>
+
+
+====================
+
+Response: NEW_BLOCK
+<OPID>: ‘z’ = 0x7A
+<OBJ>: <hash><nonce><prev_hash><timestamp><transactions>
+
+
