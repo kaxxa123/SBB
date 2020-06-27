@@ -14,7 +14,7 @@ NOTE:
  Since this assignment does not require syncing different node implementations
 standardizing these lengths is not necessary. 
 
- What is important is that lengths are used consistently.
+ What is important is that lengths are used consistently (see Final References/Notes section)
 
 
 Protocol For both UTXO & Non-UTXO
@@ -54,4 +54,17 @@ https://cryptobook.nakov.com/digital-signatures
 ECDSA-secp256k1 (Signature size)
 64 bytes (512 bits) or 
 65 bytes (513 bits) with the public key recovery bit
+
+
+Cominication re: variations in field sizes.
+
+AlexZ:
+"...I am using Nethereum which generates 65-byte signatures since in Ethereum there is the added public key recovery bit. 
+Others are generating 64-byte signatures.
+...Do we need to standardize the byte protocol such that all fields have the same size across all nodes?"
+
+Joshua:
+"You can use different lengths for such variations"
+
+
 
