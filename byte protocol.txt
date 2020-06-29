@@ -1,7 +1,7 @@
 Notes: 
 * All multi-byte numeric values should be encoded in big-endian.
 * Hashes are 32 byte wide dumps
-* Pub Keys are 64 byte wide dumps
+* Pub Keys are 64/65-byte wide dumps (see UTXO Support.txt)
  
 
 <STX><LEN><OPID><OBJ><ETX>
@@ -95,19 +95,52 @@ Response: BLOCK
 
 Note: again we have an array of fixed length items so the <LEN> value is enough to give us all we need.
 
-<tran item> = <hash><from_ac><to_ac>
-<hash>    = 32-byte fixed width hash
-<from_ac> = 64-byte public key dump
-<to_ac>   = 64-byte public key dump
+             Non-UTXO                                                 UTXO
+
+<tran item> = <hash><unused><from_ac><to_ac>            <tran item> = <hash><hash_utxo><from_ac><to_ac>
+<hash>      = 32-byte fixed width hash                  <hash>      = 32-byte fixed width hash
+<unused>    = 32-byte all set to zero                   <hash_utxo> = 32-byte fixed width hash
+<from_ac>   = 64/65-byte public key dump                <from_ac>   = 64/65-byte signature dump
+<to_ac>     = 64/65-byte public key dump                <to_ac>     = 64/65-byte public key dump
+
 
 Note: 
- The coinbase transaction would set <from_ac> to all zeros such that to always retain the fixed 64-byte width
- Each transaction item will have a fixed length of 32+64+64= 160
+ Here we are catering for 2 differnt modes Account Based (Non-UTXO) and UTXO.
+ The 2 cases require slightly different trx info. However we adopt a protocol 
+ that can accomodate both.
 
-Looking at this:
-<STX><LEN><OPID><OBJ><ETX>
+ The field width for <from_ac> and <to_ac> is not being specified with a hard value.
+ Implementations can choose between using 64-bytes or 65-bytes. The reasons for this 
+ is described in detail in a separate file (see UTXO Support.txt)
 
-<LEN> = 1 + 32 + 4 + 32 + 4 + 160*<number of transactions>
+ Non-UTXO | <unused> - should always be set to all zeros
+
+ Non-UTXO | <from_ac> - set this to the sender public key. In case of coinbase set it
+                        to all zeros such that to always retain the choosen field width 
+                        of 64/65-byte
+
+ UTXO | <hash_utxo> - set this to the hash of the transaction being spent. 
+                      set this to all zeros in case of coinbase
+
+ UTXO | <from_ac> - set this to the digital signature for the UTXO being spent. 
+                    set this to all zeros in case of coinbase
+
+
+ Depending on chosen field width for the public keys and digital signatures the
+ transaction item will always have a fixed length:
+
+ For 64-byte public keys/signatures:
+ Transaction Length = 32+32+64+64= 192
+ Looking at this:
+ <STX><LEN><OPID><OBJ><ETX>
+ <LEN> = 1 + 32 + 4 + 32 + 4 + 192*<number of transactions>
+
+
+ For 65-byte public keys/signatures:
+ Transaction Length = 32+32+65+65= 194
+ Looking at this:
+ <STX><LEN><OPID><OBJ><ETX>
+ <LEN> = 1 + 32 + 4 + 32 + 4 + 194*<number of transactions>
 
 
 ====================
