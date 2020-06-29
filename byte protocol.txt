@@ -170,7 +170,7 @@ Transaction Hash
              Non-UTXO                                                 UTXO
 
 <tran item> = <hash><unused><from_ac><to_ac>            <tran item> = <hash><hash_utxo><from_ac><to_ac>
-<hash> = Hash(<from_ac><to_ac>)                         <hash> = Hash(<hash_utxo><from_ac><to_ac>)
+<hash> = Hash(<unused><from_ac><to_ac>)                 <hash> = Hash(<hash_utxo><from_ac><to_ac>)
                                                         <hash_utxo> = <hash> of transaction being spent
 
 UTXO Signature
