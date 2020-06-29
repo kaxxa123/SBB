@@ -177,7 +177,8 @@ UTXO Signature
 ==============
 
 In UTXO the signature to be set in <from_ac> should be gnerated as follows:
-<from_ac> - Sign(<hash_utxo>)
+<from_ac> = Sign(<hash_utxo>)
+
 
 Verifying this signature will involve the following steps.
 Keep in mind that here we have 2 transactions:
