@@ -150,3 +150,51 @@ Response: NEW_BLOCK
 <OBJ>: <hash><nonce><prev_hash><timestamp><transactions>
 
 
+============================
+Generating Hashes/Signatures
+============================
+
+The specs requires the generation of 2 hashes and a signature.
+We here clarify how these are to be generated.
+
+Block Hash
+==========
+
+Block Data = <hash><nonce><prev_hash><timestamp><transactions>
+<hash> = Hash(<nonce><prev_hash><timestamp><transactions>)
+
+
+Transaction Hash
+================
+
+             Non-UTXO                                                 UTXO
+
+<tran item> = <hash><unused><from_ac><to_ac>            <tran item> = <hash><hash_utxo><from_ac><to_ac>
+<hash> = Hash(<from_ac><to_ac>)                         <hash> = Hash(<hash_utxo><from_ac><to_ac>)
+                                                        <hash_utxo> = <hash> of transaction being spent
+
+UTXO Signature
+==============
+
+In UTXO the signature to be set in <from_ac> should be gnerated as follows:
+<from_ac> - Sign(<hash_utxo>)
+
+Verifying this signature will involve the following steps.
+Keep in mind that here we have 2 transactions:
+a) Transaction being spent (the UTXO)
+b) The spending transaction (the TXI)
+
+1. Lookup the UTXO i.e. the transaction being spent
+   UTXO is the Transaction 
+      Where UTXO.<hash> == TXI.<hash_utxo>
+ 
+
+2. Determine the spender's public key:
+   pubkey = UTXO.<to_ac>
+
+
+3. Verify the spending transaction signature.
+   signature = TXI.<from_ac>
+   data = TXI.<hash_utxo>
+   Verify(signature, data, pubkey)
+
