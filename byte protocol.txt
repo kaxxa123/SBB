@@ -102,6 +102,7 @@ Note: again we have an array of fixed length items so the <LEN> value is enough 
 <unused>    = 32-byte all set to zero                   <hash_utxo> = 32-byte fixed width hash
 <from_ac>   = 64/65-byte public key dump                <from_ac>   = 64/65-byte signature dump
 <to_ac>     = 64/65-byte public key dump                <to_ac>     = 64/65-byte public key dump
+<timestamp> =  4-byte/32-bit big-endian integer         <timestamp> =  4-byte/32-bit big-endian integer
 
 
 Note: 
@@ -141,6 +142,9 @@ Note:
  Looking at this:
  <STX><LEN><OPID><OBJ><ETX>
  <LEN> = 1 + 32 + 4 + 32 + 4 + 194*<number of transactions>
+ 
+ The field <timestamp> within transactions should be set at the timestamp of when the transaction is instered in the mining pool.
+ For coinbase transactions, this should be the timestamp that the coinbase was created.
 
 
 ====================
