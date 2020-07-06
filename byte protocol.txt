@@ -143,7 +143,7 @@ Note:
  <STX><LEN><OPID><OBJ><ETX>
  <LEN> = 1 + 32 + 4 + 32 + 4 + 194*<number of transactions>
  
- The field <timestamp> within transactions should be set at the timestamp of when the transaction is instered in the mining pool.
+ The field <timestamp> within transactions should be set at the timestamp of when the transaction is inserted in the mining pool.
  For coinbase transactions, this should be the timestamp that the coinbase was created.
 
 
