@@ -105,12 +105,12 @@ Note: again we have an array of fixed length items so the <LEN> value is enough 
 
              Non-UTXO                                                 UTXO
 
-<tran item> = <hash><unused><from_ac><to_ac>            <tran item> = <hash><hash_utxo><from_ac><to_ac>
-<hash>      = 32-byte fixed width hash                  <hash>      = 32-byte fixed width hash
-<unused>    = 32-byte all set to zero                   <hash_utxo> = 32-byte fixed width hash
-<from_ac>   = 64/65-byte public key dump                <from_ac>   = 64/65-byte signature dump
-<to_ac>     = 64/65-byte public key dump                <to_ac>     = 64/65-byte public key dump
-<timestamp> =  4-byte/32-bit big-endian integer         <timestamp> =  4-byte/32-bit big-endian integer
+<tran item> = <hash><unused><from_ac><to_ac><timestamp>        <tran item> = <hash><hash_utxo><from_ac><to_ac><timestamp>
+<hash>      = 32-byte fixed width hash                         <hash>      = 32-byte fixed width hash
+<unused>    = 32-byte all set to zero                          <hash_utxo> = 32-byte fixed width hash
+<from_ac>   = 64/65-byte public key dump                       <from_ac>   = 64/65-byte signature dump
+<to_ac>     = 64/65-byte public key dump                       <to_ac>     = 64/65-byte public key dump
+<timestamp> =  4-byte/32-bit big-endian integer                <timestamp> =  4-byte/32-bit big-endian integer
 
 
 Note: 
